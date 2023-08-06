@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  gem:
+    tty: true
+    stdin_open: true
+    image: "mobysuite-gem-development:latest"
+    environment:
+      - RAILS_ENV=development
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    env_file: .env
