@@ -1,11 +1,14 @@
 require 'httparty'
+require 'pry'
 
 class AuthorizationGc2
+
   include HTTParty
-  require 'pry'
 
   NAMESPACE = "v1/api".freeze
   AUTH = ".mobysuite.com/oauth/token".freeze
+
+  @@token_gc2_auth = ""
 
   attr_accessor :headers, :domain, :client_id, :client_secret, :password, :grant_type, :token
 
@@ -19,17 +22,27 @@ class AuthorizationGc2
   end
 
   def auth count=0
-    response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
-      body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      verify: false
-    )
-    unless response.success?
-      count += 1
-      return raise "[Autorization] Problem obtain token" if count > 3
+    begin
+      if @@token_gc2_auth.empty? or count != 0
+        response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
+          body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          verify: false
+        )
+        unless response.success?
+          count += 1
+          return raise "[Autorization] Problem obtain token" if count > 3
+        end
+        self.token       = response.parsed_response["accessToken"] if response.success?
+        @@token_gc2_auth = self.token
+        {token: response.parsed_response["accessToken"], response: response.success?}
+      else
+        self.token = @@token_gc2_auth
+        {token: @@token_gc2_auth, response: true}
+      end
+    rescue => e
+      {token: nil, response: false, msg: e}
     end
-    self.token = response.parsed_response["accessToken"] if response.success?
-    {token: response.parsed_response["accessToken"], response: response.success?}
   end
 
   def set_headers
@@ -38,9 +51,7 @@ class AuthorizationGc2
 
   def define_response response
     case response.code
-    when 200
-      {response: true, body: response.parsed_response}
-    when 201
+    when 200, 201
       {response: true, body: response.parsed_response}
     when 401
       auth(1)
@@ -52,7 +63,7 @@ class AuthorizationGc2
     end
   end
 
-  def set_sender method, path, body
+  def set_sender method, path, body = nil
     case method
       when "GET"
         response = HTTParty.get("https://#{self.domain}-api.mobysuite.com/#{NAMESPACE}/#{path}", body: body, headers: self.set_headers , verify: false)
