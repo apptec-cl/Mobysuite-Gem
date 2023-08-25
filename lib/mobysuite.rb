@@ -68,7 +68,7 @@ module Mobysuite
             page: (payload[:page].nil? ? 0 : payload[:page]),
             size: (payload[:size].nil? ? 0 : payload[:size])
           }
-        set_sender("GET", "integrations/assets?page=#{payload[:page]}&size=#{payload[:size]}", payload)
+        set_sender("GET", "integrations/assets?projectId=#{payload[:projectId]}&page=#{payload[:page]}&size=#{payload[:size]}", payload)
       end
 
       def types payload
