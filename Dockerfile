@@ -8,7 +8,7 @@ RUN set -xe \
     && sed -i /stretch\\/updates/d /etc/apt/sources.list
 
 WORKDIR /app
-COPY ./Gemfile* /app
+COPY . /app
 
 RUN bundle install --jobs=4
 
