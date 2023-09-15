@@ -35,24 +35,28 @@ module Mobysuite
         @token = auth[:token]
       end
 
-      def create payload
+      def create data
         payload = {
-            "dni": (payload[:dni].nil? ? false : payload[:dni]),
-            "rut": payload[:rut],
-            "fName": payload[:fName],
-            "lName": payload[:lName],
-            "bussinesNameType": payload[:bussines_name_type],
-            "email": payload[:email],
-            "phone": payload[:phone],
-            "projectName": payload[:project_name],
-            "rangoRenta": payload[:rango_renta],
-            "informationMedium": payload[:information_medium],
-            "observation": payload[:observation],
-            "source": (payload[:source].nil? ? "CENTRALIZADOR" : payload[:source]),
-            "cip": (payload[:cip].nil? ? nil : payload[:cip]),
-            "utm_source": (payload[:utm_source].nil? ? nil : payload[:utm_source]),
-            "utm_campaign": (payload[:utm_campaign].nil? ? nil : payload[:utm_campaign])
+            "dni": (data[:dni].nil? ? false : data[:dni]),
+            "rut": data[:rut],
+            "fName": data[:fName],
+            "lName": data[:lName],
+            "bussinesNameType": data[:bussines_name_type],
+            "email": data[:email],
+            "phone": data[:phone],
+            "rangoRenta": data[:rango_renta],
+            "informationMedium": data[:information_medium],
+            "observation": data[:observation],
+            "source": (data[:source].nil? ? "CENTRALIZADOR" : data[:source]),
+            "cip": (data[:cip].nil? ? nil : data[:cip]),
+            "utm_source": (data[:utm_source].nil? ? nil : data[:utm_source]),
+            "utm_campaign": (data[:utm_campaign].nil? ? nil : data[:utm_campaign])
         }
+        if data[:project_name].nil?
+          payload[:project_id]  = data[:project_id]
+        else
+          payload[:projectName] = data[:project_name]
+        end
         set_sender("POST", "integrations/customers", payload)
       end
     end
