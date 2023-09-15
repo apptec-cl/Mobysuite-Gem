@@ -6,6 +6,7 @@ RSpec.describe Mobysuite::GC2::Quote do
     @project     = Mobysuite::GC2::Project.new("demo2")
     @asset       = Mobysuite::GC2::Asset.new("demo2")
     @parameter   = Mobysuite::GC2::Parameter.new("demo2")
+    @prospect    = Mobysuite::GC2::Prospect.new("demo2")
   end
 
   describe '#Auth' do
@@ -61,6 +62,30 @@ RSpec.describe Mobysuite::GC2::Quote do
                 asset: 813,
                 type: "Departamento"
             }]
+      })
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
+  end
+
+  describe '#Prospect' do
+    it 'Create Prospect' do
+      response = @prospect.create({
+        "dni":false,
+        "rut":"14.178.788-8",
+        "fName":"'viviana",
+        "lName":"Doris",
+        "bussines_name_type":"PERSONA_NATURAL",
+        "email":"soporte@mobysuite.com",
+        "phone":"+569",
+        "project_name":"NeoCentro",
+        "rango_renta": nil,
+        "information_medium":"INSTAGRAM",
+        "observation":"Id formulario: Form NeoCentro v3 (965085314536396). ",
+        "source":"CENTRALIZADOR",
+        "cip": nil,
+        "utm_source":"facebook-formulario",
+        "utm_campaign":"Form NeoCentro v3"
       })
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 

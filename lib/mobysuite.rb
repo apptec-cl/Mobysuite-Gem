@@ -37,15 +37,21 @@ module Mobysuite
 
       def create payload
         payload = {
-          "rut": payload[:rut],
-          "dni":	false,
-          "fName": payload[:fName],
-          "lName": payload[:lName],
-          "email":  payload[:email],
-          "phone": payload[:phone],
-          "projectName": payload[:project_name],
-          "observation": payload[:observation],
-          "metadata": payload[:metadata],
+            "dni": (payload[:dni].nil? ? false : payload[:dni]),
+            "rut": payload[:rut],
+            "fName": payload[:fName],
+            "lName": payload[:lName],
+            "bussinesNameType": payload[:bussines_name_type],
+            "email": payload[:email],
+            "phone": payload[:phone],
+            "projectName": payload[:project_name],
+            "rangoRenta": payload[:rango_renta],
+            "informationMedium": payload[:information_medium],
+            "observation": payload[:observation],
+            "source": (payload[:source].nil? ? "CENTRALIZADOR" : payload[:source]),
+            "cip": (payload[:cip].nil? ? nil : payload[:cip]),
+            "utm_source": (payload[:utm_source].nil? ? nil : payload[:utm_source]),
+            "utm_campaign": (payload[:utm_campaign].nil? ? nil : payload[:utm_campaign])
         }
         set_sender("POST", "integrations/customers", payload)
       end
