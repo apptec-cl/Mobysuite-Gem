@@ -45,6 +45,10 @@ class AuthorizationGc2
     end
   end
 
+  def is_auth?
+    self.token.nil? ? false : true
+  end
+
   def set_headers
     self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
   end
