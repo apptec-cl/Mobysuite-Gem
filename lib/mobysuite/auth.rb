@@ -23,7 +23,7 @@ class AuthorizationGc2
 
   def auth count=0
     begin
-      if @@token_gc2_auth.nil? or count != 0
+      if @@token_gc2_auth.nil? || count != 0 || @@token_gc2_auth.length == 0
         response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
           body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
