@@ -103,8 +103,8 @@ module Mobysuite
       def list payload = nil
         unless payload.nil?
           payload = {
-            page: (payload[:page].empty? ? 0 : payload[:page]),
-            size: (payload[:size].empty? ? 0 : payload[:size])
+            page: (payload[:page].nil? ? 0 : payload[:page]),
+            size: (payload[:size].nil? ? 0 : payload[:size])
           }
         end
         set_sender("GET", "integrations/projects", payload)
