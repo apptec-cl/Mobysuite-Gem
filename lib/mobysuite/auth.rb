@@ -14,8 +14,8 @@ class AuthorizationGc2
 
   def initialize domain, client_id=nil, client_secret=nil, grant_type="client_credentials"
     self.domain        = domain
-    self.client_id     = ENV["MOBYSUITE_GC2_CLIENT_ID"].empty? ? client_id : ENV["MOBYSUITE_GC2_CLIENT_ID"]
-    self.client_secret = ENV["MOBYSUITE_GC2_CLIENT_SECRET"].empty? ? client_secret : ENV["MOBYSUITE_GC2_CLIENT_SECRET"] 
+    self.client_id     = ENV["MOBYSUITE_GC2_CLIENT_ID"].nil? ? client_id : ENV["MOBYSUITE_GC2_CLIENT_ID"]
+    self.client_secret = ENV["MOBYSUITE_GC2_CLIENT_SECRET"].nil? ? client_secret : ENV["MOBYSUITE_GC2_CLIENT_SECRET"] 
     self.token         = nil
     self.grant_type    = grant_type
     self.headers       = {}
@@ -23,7 +23,7 @@ class AuthorizationGc2
 
   def auth count=0
     begin
-      if @@token_gc2_auth.empty? or count != 0
+      if @@token_gc2_auth.nil? or count != 0
         response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
           body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
