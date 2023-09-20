@@ -7,7 +7,6 @@ RSpec.describe Mobysuite::GC2::Asset do
 
   describe '#Auth' do
     it 'Get Token' do
-      binding.pry
       response = @asset.auth
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true)
