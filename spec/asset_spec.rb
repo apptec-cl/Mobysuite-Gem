@@ -1,4 +1,5 @@
 require 'mobysuite'
+# require 'pry'
 
 RSpec.describe Mobysuite::GC2::Asset do
   before do
@@ -15,7 +16,6 @@ RSpec.describe Mobysuite::GC2::Asset do
 
   describe '#Assets' do
     it 'List' do
-      binding.pry
       response = @asset.list({project_id: 1})
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 

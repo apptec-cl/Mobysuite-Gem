@@ -22,6 +22,9 @@ class AuthorizationGc2
   end
 
   def auth count=0
+    #Remove for authentication
+    return  {token: nil, response: true, msg: ""}
+    #Remove for authentication
     begin
       if @@token_gc2_auth.nil? || count != 0 || @@token_gc2_auth.length == 0
         response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
@@ -50,7 +53,10 @@ class AuthorizationGc2
   end
 
   def set_headers
-    self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
+    # Descomment for authentication
+    # self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
+    # Descomment for authentication
+    self.headers = {}
   end
 
   def define_response response
