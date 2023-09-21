@@ -56,7 +56,7 @@ class AuthorizationGc2
     # Descomment for authentication
     # self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
     # Descomment for authentication
-    self.headers = {}
+    self.headers = {'Content-Type': 'application/json'}
   end
 
   def define_response response
