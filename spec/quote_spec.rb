@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Quote do
   before do
-    @quote       = Mobysuite::GC2::Quote.new("demo2")
+    @quote = Mobysuite::GC2::Quote.new("demo2")
   end
 
   describe '#Auth' do
