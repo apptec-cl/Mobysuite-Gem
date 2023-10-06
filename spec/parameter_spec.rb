@@ -15,7 +15,8 @@ RSpec.describe Mobysuite::GC2::Parameter do
 
   describe '#Parameter' do
     it 'List Commune' do
-      response = @parameter.commune_list()
+      response = @parameter.table("COMUNA")
+      binding.pry
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end

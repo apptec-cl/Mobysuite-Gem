@@ -1,5 +1,4 @@
 require 'mobysuite'
-require 'pry'
 
 RSpec.describe Mobysuite::GC2::Asset do
   before do

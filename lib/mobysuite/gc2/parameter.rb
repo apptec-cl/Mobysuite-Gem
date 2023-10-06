@@ -6,8 +6,8 @@ module Mobysuite
         @token = auth[:token]
       end
 
-      def commune_list payload = nil
-        set_sender("GET", "integrations/parameters/table/COMUNA", payload)
+      def table payload
+        set_sender("GET", "integrations/parameters/table/#{payload}", payload)
       end
     end
   end
