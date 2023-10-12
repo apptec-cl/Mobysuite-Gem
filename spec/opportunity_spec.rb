@@ -14,8 +14,8 @@ RSpec.describe Mobysuite::GC2::Opportunity do
     end
   end
 
-  describe '#Booking' do
-    it 'Create Booking' do
+  describe '#Opportunity' do
+    it 'List' do
       response = @opportunity.list()
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 

@@ -13,6 +13,16 @@ module Mobysuite
         end
         set_sender("GET", "integrations/assets/available-opportunities", payload)
       end
+      def calculate_payment_plan payload = nil
+        unless payload.nil?
+          payload = {
+            "discountId": payload[:discountId],
+            "assets": payload[:assets],
+            "customer": payload[:customer],
+          }
+        end
+        set_sender("POST", "integrations/assets/calculate-payment-plan", payload)
+      end
     end
   end
 end
