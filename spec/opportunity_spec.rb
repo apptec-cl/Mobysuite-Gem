@@ -1,5 +1,5 @@
 require 'mobysuite'
- require 'pry'
+# require 'pry'
 
 RSpec.describe Mobysuite::GC2::Opportunity do
   before do
@@ -22,7 +22,7 @@ RSpec.describe Mobysuite::GC2::Opportunity do
     end
     it 'CalculatePaymentPlan' do
       opportunities = @opportunity.list()
-      return expect(false).to eq(true), 'No hay oportunidades disponibles.' if opportunities[:body].nil?
+      expect(opportunities[:body].nil?).to eq(false), 'No hay oportunidades disponibles.'
       opportunity = opportunities[:body][0]
       data = {
         "discountId": opportunity['descuentoGrupo'][0]['id'],
