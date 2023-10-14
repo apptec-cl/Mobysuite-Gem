@@ -18,6 +18,7 @@ module Mobysuite
             "project": payload[:project_id],
             "assets": payload[:assets],
         }
+        payload["discountId"] = payload[:discountId].to_i unless payload[:discountId].blank?
         set_sender("POST", "integrations/quotes", payload)
       end
     end
