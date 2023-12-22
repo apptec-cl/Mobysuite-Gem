@@ -8,6 +8,7 @@ require "mobysuite/gc2/parameter"
 require "mobysuite/gc2/booking"
 require "mobysuite/gc2/opportunity"
 require "mobysuite/gc2/amc"
+require "mobysuite/gc2/contract"
 
 module Mobysuite
   module GC2
