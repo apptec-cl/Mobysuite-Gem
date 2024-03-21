@@ -25,14 +25,13 @@ module Mobysuite
         }
         set_sender("POST", "integrations/mobymeet", payload)
       end
+      def accept_reject data
+        payload = {
+            "contactEventId": data[:id],
+            "status": data[:accept],
+        }
+        set_sender("POST", "integrations/mobymeet/accept-reject", payload)
+      end
     end
-    def accept_reject data
-      payload = {
-          "contactEventId": data[:id],
-          "status": data[:accept],
-      }
-      set_sender("POST", "integrations/mobymeet/accept-reject", payload)
-    end
-  end
   end
 end
