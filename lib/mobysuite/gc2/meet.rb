@@ -11,8 +11,8 @@ module Mobysuite
         payload = {
             "dni": data[:dni],
             "rut": data[:rut],
-            "fName": data[:fName],
-            "lName": data[:lName],
+            "firstName": data[:fName],
+            "lastName": data[:lName],
             "email": data[:email],
             "phone": data[:phone],
             "informationMedium": data[:informationMedium],

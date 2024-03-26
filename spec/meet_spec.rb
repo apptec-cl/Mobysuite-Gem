@@ -18,8 +18,8 @@ RSpec.describe Mobysuite::GC2::Meet do
       response = @meet.create({     
         "dni":true,
         "rut":"1234567-4",
-        "fname":"Test",
-        "lname":"Mobysuite",
+        "fName":"Test",
+        "lName":"Mobysuite",
         "email":"soporte@apptec.cl",
         "phone":"+56999999999",
         "project_id":1,
@@ -32,7 +32,15 @@ RSpec.describe Mobysuite::GC2::Meet do
         "token":"",
       })
       expect(response).to be_a(Hash)
-      expect(response[:response]).to eq(true) 
+      expect(response[:response]).to eq(true)
+      response[:body]
+      data = {
+				"id": response[:body]["idEventoContacto"],
+				"accept": true,
+			}
+      second_res = @meet.accept_reject(data)
+      expect(second_res).to be_a(Hash)
+      expect(second_res[:response]).to eq(true)
     end
   end
 end
