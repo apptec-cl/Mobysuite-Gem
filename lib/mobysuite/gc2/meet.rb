@@ -30,6 +30,8 @@ module Mobysuite
             "contactEventId": data[:id],
             "status": data[:accept],
         }
+        payload.merge!("observation": data[:observation]) unless data[:observation].nil?
+        payload.merge!("urlVideoConf": data[:urlVideoConf]) unless data[:urlVideoConf].nil?
         set_sender("POST", "integrations/mobymeet/accept-reject", payload)
       end
     end
