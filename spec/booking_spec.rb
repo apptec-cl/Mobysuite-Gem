@@ -55,7 +55,7 @@ RSpec.describe Mobysuite::GC2::Booking do
         tipe_pay:"Webpay"
         })
       expect(response).to be_a(Hash)
-      expect(response[:response]).to eq(true) 
+      expect(response[:response]).to eq(true), "Hubo un error al crear la reserva. Mensaje de error: #{response[:body].to_s}"
     end
   end
 end

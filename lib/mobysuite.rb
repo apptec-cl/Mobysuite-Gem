@@ -10,6 +10,7 @@ require "mobysuite/gc2/opportunity"
 require "mobysuite/gc2/amc"
 require "mobysuite/gc2/contract"
 require "mobysuite/gc2/meet"
+require "mobysuite/gc2/payment"
 
 module Mobysuite
   module GC2

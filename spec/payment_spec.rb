@@ -1,0 +1,29 @@
+require 'mobysuite'
+
+RSpec.describe Mobysuite::GC2::Payment do
+  before do
+    @payment = Mobysuite::GC2::Payment.new("demo2")
+  end
+
+  describe '#Payment' do
+    it 'Search Payment' do
+      response = @payment.find("P-VBSR45554")
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
+
+    it 'Make the payment' do
+      response = @payment.pay({
+        "pay_code": "P-VBSR45554",
+        "auth_code": "test",
+        "card_number": "1111",
+        "amount": 5990,
+        "total_payments": 3,
+        "interest_free_payments":2,
+        "tipe_pay":"web"
+      })
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
+  end
+end

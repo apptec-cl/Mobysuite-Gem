@@ -18,16 +18,16 @@ RSpec.describe Mobysuite::GC2::Prospect do
       #projectName or project_id is required
       response = @prospect.create({
         "dni":false,
-        "rut": "14.178.788-8",
-        "fName": "viviana",
-        "lName": "Doris",
+        "rut": "17.810.699-6",
+        "fName": "Soporte",
+        "lName": "Mobysuite",
         "bussines_name_type": "PERSONA_NATURAL",
         "email": "soporte@mobysuite.com",
-        "phone": "+569",
-        "project_id": 3,
+        "phone": "+56972154899",
+        "project_id": 1,
         "rango_renta": nil,
         "information_medium": "INSTAGRAM",
-        "observation": "Id formulario: Form NeoCentro v3 (965085314536396). ",
+        "observation": "Id formulario: Form Soporte Mobysuite v3 (965085314536396). ",
         "source": "CENTRALIZADOR",
         "cip": nil
       })
