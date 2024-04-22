@@ -14,14 +14,13 @@ RSpec.describe Mobysuite::GC2::Payment do
 
     it 'Make the payment' do
       response = @payment.pay({
-        "pay_code": "P-VBSR45554",
+        "pay_code": "P-YQVG45551",
         "auth_code": "test",
         "card_number": "1111",
-        "amount": 5990,
         "total_payments": 3,
         "interest_free_payments":2,
-        "tipe_pay":"web"
       })
+      p response
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end

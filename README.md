@@ -30,6 +30,6 @@ To build the gem, run the following command:
 
 gem build mobysuite.gemspec
 
-## Contributing
+## Test
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mobysuite.
+rspec

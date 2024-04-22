@@ -18,8 +18,9 @@ module Mobysuite
           "amount": data[:amount],
           "totalPayments": data[:total_payments],
           "interestFreePayments": data[:interest_free_payments],
-          "tipePay": data[:tipe_pay]
         }
+        payload[:amount] = data[:amount] unless data[:amount].nil?
+        payload[:tipePay] = data[:tipePay] unless data[:tipePay].nil?
         set_sender("POST", "integrations/payments", payload)
       end
     end
