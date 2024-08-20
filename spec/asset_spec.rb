@@ -25,5 +25,11 @@ RSpec.describe Mobysuite::GC2::Asset do
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end
+
+    it 'ClientAssetsProject' do
+      response = @asset.client_assets_project({project_id: 1})
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
   end
 end

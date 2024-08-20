@@ -30,6 +30,14 @@ module Mobysuite
         set_sender("GET", "integrations/asset-types/project/#{payload[:project_id]}?page=#{payload[:page]}&size=#{payload[:size]}")
       end
 
+      def client_assets_project payload = nil
+        unless payload.nil?
+          payload = {
+            project: payload[:project_id]
+          }
+        end
+        set_sender("GET", "integrations/assets/list-client-assets-by-project?project=#{payload[:project]}")
+      end
     end
   end
 end
