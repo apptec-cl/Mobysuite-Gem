@@ -11,7 +11,7 @@ module Mobysuite
           payload[:page] = (payload[:page].nil? ? 0 : payload[:page])
           payload[:size] = (payload[:size].nil? ? 0 : payload[:size])
         end
-        set_sender("GET", "integrations/assets/available-opportunities", payload)
+        set_sender("GET", "integrations/assets/available-opportunities#{payload[:project].blank? ? '' : '?project='}#{payload[:project]}", payload)
       end
       def calculate_payment_plan payload = nil
         unless payload.nil?
