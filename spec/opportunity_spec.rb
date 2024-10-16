@@ -20,6 +20,11 @@ RSpec.describe Mobysuite::GC2::Opportunity do
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end
+    it 'ListWihtProject' do
+      response = @opportunity.list({project: 1})
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
     it 'CalculatePaymentPlan' do
       opportunities = @opportunity.list()
       expect(opportunities[:body].nil?).to eq(false), 'No hay oportunidades disponibles.'
