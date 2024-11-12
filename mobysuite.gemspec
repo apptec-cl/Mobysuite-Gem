@@ -2,10 +2,8 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "mobysuite/version"
-require 'dotenv'
 
 Gem::Specification.new do |spec|
-  Dotenv.load(File.expand_path("../.env", __FILE__))
   spec.name          = "mobysuite"
   spec.version       = Mobysuite::VERSION
   spec.authors       = ["Matias"]
