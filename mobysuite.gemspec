@@ -2,8 +2,10 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "mobysuite/version"
+require 'dotenv'
 
 Gem::Specification.new do |spec|
+  Dotenv.load(File.expand_path("../.env", __FILE__))
   spec.name          = "mobysuite"
   spec.version       = Mobysuite::VERSION
   spec.authors       = ["Matias"]
@@ -26,7 +28,7 @@ Gem::Specification.new do |spec|
   # spec.files         = `git ls-files -z`.split("\x0").reject do |f|
   #   f.match(%r{^(test|spec|features)/})
   # end
-  spec.files = Dir["lib/**/*.rb", "exe/*"]
+  spec.files = Dir["lib/**/*.rb", "exe/*", ".env"]
 
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
