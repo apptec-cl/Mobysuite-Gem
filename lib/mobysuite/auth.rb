@@ -1,8 +1,8 @@
 require 'httparty'
 # require 'pry'
-require 'dotenv'
+# require 'dotenv'
 class AuthorizationGc2
-  Dotenv.load('.env')
+  # Dotenv.load('.env')
   include HTTParty
 
   NAMESPACE = "v1/api".freeze
