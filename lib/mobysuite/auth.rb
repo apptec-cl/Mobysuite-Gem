@@ -1,8 +1,8 @@
 require 'httparty'
 # require 'pry'
-
+require 'dotenv'
 class AuthorizationGc2
-
+  Dotenv.load('.env')
   include HTTParty
 
   NAMESPACE = "v1/api".freeze
@@ -56,7 +56,7 @@ class AuthorizationGc2
     # Descomment for authentication
     self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
     # Descomment for authentication
-    self.headers = {'Content-Type': 'application/json'}
+    # self.headers = {'Content-Type': 'application/json'}
   end
 
   def define_response response
