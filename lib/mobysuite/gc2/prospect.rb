@@ -24,6 +24,7 @@ module Mobysuite
             "utm_source": (data[:utm_source].nil? ? nil : data[:utm_source]),
             "utm_campaign": (data[:utm_campaign].nil? ? nil : data[:utm_campaign])
         }
+        payload[:userId] = data[:user_id] unless data[:user_id].nil?
         if data[:project_name].nil?
           payload[:project_id]  = data[:project_id]
         else
