@@ -22,7 +22,10 @@ module Mobysuite
             "source": (data[:source].nil? ? "CENTRALIZADOR" : data[:source]),
             "cip": (data[:cip].nil? ? nil : data[:cip]),
             "utm_source": (data[:utm_source].nil? ? nil : data[:utm_source]),
-            "utm_campaign": (data[:utm_campaign].nil? ? nil : data[:utm_campaign])
+            "utm_campaign": (data[:utm_campaign].nil? ? nil : data[:utm_campaign]),
+            "utm_medium": (data[:utm_medium].nil? ? nil : data[:utm_medium]),
+            "utm_term": (data[:utm_term].nil? ? nil : data[:utm_term]),
+            "utm_content": (data[:utm_content].nil? ? nil : data[:utm_content])
         }
         payload[:userId] = data[:user_id] unless data[:user_id].nil?
         if data[:project_name].nil?
