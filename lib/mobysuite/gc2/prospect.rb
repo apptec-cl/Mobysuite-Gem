@@ -25,7 +25,8 @@ module Mobysuite
             "utm_campaign": (data[:utm_campaign].nil? ? nil : data[:utm_campaign]),
             "utm_medium": (data[:utm_medium].nil? ? nil : data[:utm_medium]),
             "utm_term": (data[:utm_term].nil? ? nil : data[:utm_term]),
-            "utm_content": (data[:utm_content].nil? ? nil : data[:utm_content])
+            "utm_content": (data[:utm_content].nil? ? nil : data[:utm_content]),
+            "isSync": data[:isSync].nil? false : data[:isSync],
         }
         payload[:userId] = data[:user_id] unless data[:user_id].nil?
         if data[:project_name].nil?
