@@ -28,6 +28,7 @@ module Mobysuite
             "utm_content": (data[:utm_content].nil? ? nil : data[:utm_content]),
             "isSync": data[:isSync].nil? ? false : data[:isSync],
         }
+        payload[:tipoComprador] = data[:tipo_comprador] unless data[:tipo_comprador].nil?
         payload[:userId] = data[:user_id] unless data[:user_id].nil?
         if data[:project_name].nil?
           payload[:project_id]  = data[:project_id]
