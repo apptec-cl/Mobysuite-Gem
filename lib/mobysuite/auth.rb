@@ -23,7 +23,7 @@ class AuthorizationGc2
 
   def auth count=0
     #Remove for authentication
-    # return  {token: nil, response: true, msg: ""}
+    return  {token: nil, response: true, msg: ""}
     #Remove for authentication
     begin
       if @@token_gc2_auth.nil? || count != 0 || @@token_gc2_auth.length == 0
@@ -54,9 +54,9 @@ class AuthorizationGc2
 
   def set_headers
     # Descomment for authentication
-    self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
+    # self.headers = {"Authorization": "Bearer #{self.token}", 'Content-Type': 'application/json'}
     # Descomment for authentication
-    # self.headers = {'Content-Type': 'application/json'}
+    self.headers = {'Content-Type': 'application/json'}
   end
 
   def define_response response
