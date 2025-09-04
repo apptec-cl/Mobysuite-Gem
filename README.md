@@ -33,3 +33,5 @@ gem build mobysuite.gemspec
 ## Test
 
 rspec
+
+rspec spec/client_spec.rb

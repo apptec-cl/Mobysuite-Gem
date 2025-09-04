@@ -11,6 +11,7 @@ require "mobysuite/gc2/amc"
 require "mobysuite/gc2/contract"
 require "mobysuite/gc2/meet"
 require "mobysuite/gc2/payment"
+require "mobysuite/gc2/client"
 
 module Mobysuite
   module GC2
