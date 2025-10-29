@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Parameter do
   before do
-    @parameter = Mobysuite::GC2::Parameter.new("demo2")
+    @parameter = Mobysuite::GC2::Parameter.new("try")
   end
 
   describe '#Auth' do

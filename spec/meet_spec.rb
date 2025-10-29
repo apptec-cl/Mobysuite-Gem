@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Meet do
   before do
-    @meet    = Mobysuite::GC2::Meet.new("demo2")
+    @meet    = Mobysuite::GC2::Meet.new("try")
   end
 
   describe '#Auth' do

@@ -28,10 +28,14 @@ TODO: Write usage instructions here
 
 To build the gem, run the following command:
 
+```ruby
 gem build mobysuite.gemspec
+```
 
 ## Test
 
-rspec
+```rubyr
+spec
 
 rspec spec/client_spec.rb
+```

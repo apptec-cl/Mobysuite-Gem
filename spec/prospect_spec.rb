@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Prospect do
   before do
-    @prospect    = Mobysuite::GC2::Prospect.new("demo2")
+    @prospect    = Mobysuite::GC2::Prospect.new("try")
   end
 
   describe '#Auth' do

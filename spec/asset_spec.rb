@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Asset do
   before do
-    @asset = Mobysuite::GC2::Asset.new("demo2")
+    @asset = Mobysuite::GC2::Asset.new("try")
   end
 
   describe '#Auth' do

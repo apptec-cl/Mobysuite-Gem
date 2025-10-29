@@ -8,13 +8,17 @@ module Mobysuite
         end
 
         def list payload = {}
-          c_format = payload[:contract_format].nil? ? "?" : "?cFormat=#{payload[:contract_format].to_s}"
-          if !payload[:client_id].nil?
-            return set_sender("GET", "integrations/contracts#{c_format}&cId=#{payload[:client_id].to_s}")
-          elsif !payload[:client_rut].nil?
-            return set_sender("GET", "integrations/contracts#{c_format}&cName=#{payload[:client_rut].to_s}")
-          end
-        end
+          params = []
+          
+          params << "cFormat=#{payload[:contract_format]}" unless payload[:contract_format].nil?
+          params << "cId=#{payload[:client_id]}" unless payload[:client_id].nil?
+          params << "cName=#{payload[:client_rut]}" unless payload[:client_rut].nil?
+          params << "eContract=#{payload[:e_contract]}" unless payload[:e_contract].nil?
+          
+          query_string = params.empty? ? "" : "?#{params.join('&')}"
+          
+          return set_sender("GET", "integrations/contracts#{query_string}")
+      end
     end
   end
 end

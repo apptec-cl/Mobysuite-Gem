@@ -3,9 +3,9 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Booking do
   before do
-    @booking = Mobysuite::GC2::Booking.new("demo2")
-    @quote = Mobysuite::GC2::Quote.new("demo2")
-    @asset = Mobysuite::GC2::Asset.new("demo2")
+    @booking = Mobysuite::GC2::Booking.new("try")
+    @quote = Mobysuite::GC2::Quote.new("try")
+    @asset = Mobysuite::GC2::Asset.new("try")
   end
 
   describe '#Auth' do

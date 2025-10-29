@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Amc do
   before do
-    @amc = Mobysuite::GC2::Amc.new("demo2")
+    @amc = Mobysuite::GC2::Amc.new("try")
   end
 
   describe '#AMC' do

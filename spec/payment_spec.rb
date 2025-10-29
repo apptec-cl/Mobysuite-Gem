@@ -2,7 +2,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Payment do
   before do
-    @payment = Mobysuite::GC2::Payment.new("demo2")
+    @payment = Mobysuite::GC2::Payment.new("try")
   end
 
   describe '#Payment' do

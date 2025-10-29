@@ -3,7 +3,7 @@ require 'mobysuite'
 
 RSpec.describe Mobysuite::GC2::Opportunity do
   before do
-    @opportunity = Mobysuite::GC2::Opportunity.new("demo2")
+    @opportunity = Mobysuite::GC2::Opportunity.new("try")
   end
 
   describe '#Auth' do
