@@ -20,6 +20,7 @@ module Mobysuite
         }
         #Validate optional paramss
         data.merge!("dni": true) unless payload[:dni].nil?
+        data.merge!("userId": payload[:userId]) unless payload[:userId].nil?
         data.merge!("profesion": payload[:profesion]) unless payload[:profesion].nil?
         data.merge!("comuna": payload[:comuna]) unless payload[:comuna].nil?
         data.merge!("ageRange": payload[:ageRange]) unless payload[:ageRange].nil?
