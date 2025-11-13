@@ -33,6 +33,8 @@ class AuthorizationGc2
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           verify: false
         )
+        p "[Mobysuite response]"
+        p response.parsed_response
         unless response.success?
           count += 1
           return raise "[Autorization] Problem obtain token" if count > 3
