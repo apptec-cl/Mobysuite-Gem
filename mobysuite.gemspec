@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
       "public gem pushes."
   end
   spec.add_dependency 'httparty'
+  spec.add_dependency "dotenv"
 
   # spec.files         = `git ls-files -z`.split("\x0").reject do |f|
   #   f.match(%r{^(test|spec|features)/})
