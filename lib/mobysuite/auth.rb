@@ -26,6 +26,7 @@ class AuthorizationGc2
     #return  {token: nil, response: true, msg: ""}
     #Remove for authentication
     begin
+      p "[Mobysuite] #{ENV["MOBYSUITE_GC2_CLIENT_ID"]}"
       if @@token_gc2_auth.nil? || count != 0 || @@token_gc2_auth.length == 0
         response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
           body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
