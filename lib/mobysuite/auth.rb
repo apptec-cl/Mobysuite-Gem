@@ -8,7 +8,6 @@ class AuthorizationGc2
   NAMESPACE = "v1/api".freeze
   AUTH = ".mobysuite.com/oauth/token".freeze
 
-  @@token_gc2_auth = ""
 
   attr_accessor :headers, :domain, :client_id, :client_secret, :password, :grant_type, :token
 
@@ -22,12 +21,13 @@ class AuthorizationGc2
   end
 
   def auth count=0
+    token_gc2_auth = ""
     #Remove for authentication
     #return  {token: nil, response: true, msg: ""}
     #Remove for authentication
     begin
       p "[Mobysuite] #{ENV["MOBYSUITE_GC2_CLIENT_ID"]}"
-      if @@token_gc2_auth.nil? || count != 0 || @@token_gc2_auth.length == 0
+      if token_gc2_auth.nil? || count != 0 || token_gc2_auth.length == 0
         response = HTTParty.post("https://#{self.domain}-api#{AUTH}",
           body: {client_id: self.client_id, client_secret: self.client_secret, grant_type: self.grant_type},
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -40,11 +40,11 @@ class AuthorizationGc2
           return raise "[Autorization] Problem obtain token" if count > 3
         end
         self.token       = response.parsed_response["accessToken"] if response.success?
-        @@token_gc2_auth = self.token
+        token_gc2_auth = self.token
         {token: response.parsed_response["accessToken"], response: response.success?}
       else
-        self.token = @@token_gc2_auth
-        {token: @@token_gc2_auth, response: true}
+        self.token = token_gc2_auth
+        {token: token_gc2_auth, response: true}
       end
     rescue => e
       {token: nil, response: false, msg: e}
