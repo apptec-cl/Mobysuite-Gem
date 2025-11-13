@@ -23,6 +23,10 @@ module Mobysuite
         payload[:tipePay] = data[:tipePay] unless data[:tipePay].nil?
         set_sender("POST", "integrations/payments", payload)
       end
+      def active_payment_info data
+        parameter = data[:contract_id].nil? ? "idAsset=#{data[:asset_id]}" : "idContract=#{data[:contract_id]}"
+        set_sender("GET", "integrations/payments/add-automated-payments-info?#{parameter}&tipo=#{data[:type]}", data)
+      end
     end
   end
 end

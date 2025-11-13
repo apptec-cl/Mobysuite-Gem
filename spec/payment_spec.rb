@@ -6,8 +6,16 @@ RSpec.describe Mobysuite::GC2::Payment do
   end
 
   describe '#Payment' do
+
+
     it 'Search Payment' do
       response = @payment.find("P-VBSR45554")
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
+
+    it 'Add Payment Info (PAC/PAT)' do
+      response = @payment.active_payment_info({contract_id: 3679, type: "Fintoc"})
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end
