@@ -14,7 +14,7 @@ module Mobysuite
           params << "cId=#{payload[:client_id]}" unless payload[:client_id].nil?
           params << "cName=#{payload[:client_rut]}" unless payload[:client_rut].nil?
           params << "eContract=#{payload[:e_contract]}" unless payload[:e_contract].nil?
-          params << "contract=#{payload[:e_contract]}" unless payload[:e_contract].nil?
+          params << "contract=#{payload[:contract_id]}" unless payload[:contract_id].nil?
 
           query_string = params.empty? ? "" : "?#{params.join('&')}"
           
