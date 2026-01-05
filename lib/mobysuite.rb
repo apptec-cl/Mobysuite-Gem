@@ -13,6 +13,7 @@ require "mobysuite/gc2/meet"
 require "mobysuite/gc2/payment"
 require "mobysuite/gc2/client"
 require "mobysuite/gc2/firm"
+require "mobysuite/gc2/deed"
 
 module Mobysuite
   module GC2

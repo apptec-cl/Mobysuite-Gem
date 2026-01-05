@@ -7,6 +7,13 @@ module Mobysuite
         @token = auth[:token]
       end
 
+      def edit payload
+		    data = { estadoBien: payload[:asset_status] }
+        data.merge!(id: payload[:id]) unless payload[:id].nil?
+        data.merge!(idErp: payload[:id_erp]) unless payload[:id_erp].nil?
+        set_sender("POST", "integrations/assets", [data])
+      end
+
       def list payload
           payload = {
             projectId: payload[:project_id],

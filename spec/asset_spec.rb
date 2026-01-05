@@ -31,5 +31,12 @@ RSpec.describe Mobysuite::GC2::Asset do
       expect(response).to be_a(Hash)
       expect(response[:response]).to eq(true) 
     end
+
+    it 'Edit Asset' do
+      response = @asset.edit({id_erp: 123, asset_status: "ENTREGADO"})
+      p response
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
   end
 end
