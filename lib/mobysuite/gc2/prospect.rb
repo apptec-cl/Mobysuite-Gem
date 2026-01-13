@@ -7,6 +7,21 @@ module Mobysuite
         @token = auth[:token]
       end
 
+      def badge data
+        payload = {
+            "module":   data[:module],
+            "value":    data[:value],
+            "message":  data[:message],
+            "chatbot":  data[:chatbot]
+          }
+        payload[:phone_id] = data[:phone_id] unless data[:phone_id].nil?
+        payload[:chatb_id] = data[:chatb_id] unless data[:chatb_id].nil?
+        payload[:assetId] = data[:asset_id] unless data[:asset_id].nil?
+        
+        set_sender("POST", "integrations/badge", payload)
+      end
+            
+
       def create data
         payload = {
             "dni": (data[:dni].nil? ? false : data[:dni]),
