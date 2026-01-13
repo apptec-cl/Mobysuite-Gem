@@ -13,6 +13,20 @@ RSpec.describe Mobysuite::GC2::Prospect do
     end
   end
 
+  describe '#Badge' do
+    it 'Create Badge for WhatsApp notification' do
+      response = @prospect.badge({
+        module: "whatsapp",
+        value: "+56972154899",
+        message: "Mensaje multimedia",
+        chatbot: true,
+        phone_id: 1
+      })
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true)
+    end
+  end
+
   describe '#Prospect' do
     it 'Create Prospect' do
       #projectName or project_id is required
