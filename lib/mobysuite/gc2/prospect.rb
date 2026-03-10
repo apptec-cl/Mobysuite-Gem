@@ -15,6 +15,7 @@ module Mobysuite
             "chatbot":  data[:chatbot],
             "phone_id": data[:phone_id],
           }
+        payload[:project_id] = data[:project_id] unless data[:project_id].nil?
         payload[:phone_id] = data[:phone_id] unless data[:phone_id].nil?
         payload[:chatb_id] = data[:chatb_id] unless data[:chatb_id].nil?
         payload[:assetId] = data[:asset_id] unless data[:asset_id].nil?
