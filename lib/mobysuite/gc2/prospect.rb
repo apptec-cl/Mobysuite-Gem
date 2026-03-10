@@ -21,6 +21,14 @@ module Mobysuite
         
         set_sender("POST", "integrations/badge", payload)
       end
+      def chatbot data
+        payload = {
+          "phone":    data[:phone],
+          "chatbot":  data[:chatbot]
+        }
+        payload[:project_id] = data[:project_id] unless data[:project_id].nil?
+        set_sender("POST", "integrations/chatbot", payload)
+      end
             
 
       def create data
