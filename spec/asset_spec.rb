@@ -20,6 +20,12 @@ RSpec.describe Mobysuite::GC2::Asset do
       expect(response[:response]).to eq(true) 
     end
 
+    it 'List All' do
+      response = @asset.list_all({project_id: 1})
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true) 
+    end
+
     it 'Types' do
       response = @asset.types({project_id: 1})
       expect(response).to be_a(Hash)
