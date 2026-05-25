@@ -8,36 +8,38 @@ module Mobysuite
       end
 
       def edit payload
-		    data = { estadoBien: payload[:asset_status] }
-        data.merge!(id: payload[:id]) unless payload[:id].nil?
-        data.merge!(idErp: payload[:id_erp]) unless payload[:id_erp].nil?
-        set_sender("POST", "integrations/assets", [data])
+		    payload.merge!(estadoBien: payload[:asset_status]) unless payload[:asset_status].nil?
+        payload.merge!(id: payload[:id]) unless payload[:id].nil?
+        payload.merge!(idErp: payload[:id_erp]) unless payload[:id_erp].nil?
+        set_sender("POST", "integrations/assets", [payload])
       end
 
       def list payload
-          payload = {
+          params = {
             projectId: payload[:project_id],
             departmentTypology: payload[:department_typology],
             assetNumber: payload[:asset_number],
             assetType: payload[:asset_type],
             projectStage: payload[:project_stage],
-            page: (payload[:page].nil? ? 0 : payload[:page]),
-            size: (payload[:size].nil? ? 0 : payload[:size])
-          }
-        set_sender("GET", "integrations/assets?projectId=#{payload[:projectId]}&page=#{payload[:page]}&size=#{payload[:size]}", payload)
+            page: payload[:page] || 0,
+            size: payload[:size] || 0
+          }.reject { |_, v| v.nil? }
+          query_string = params.map { |k, v| "#{k}=#{v}" }.join("&")
+        set_sender("GET", "integrations/assets?#{query_string}", params)
       end
 
       def list_all payload
-          payload = {
+          params = {
             projectId: payload[:project_id],
             departmentTypology: payload[:department_typology],
             assetNumber: payload[:asset_number],
             assetType: payload[:asset_type],
             projectStage: payload[:project_stage],
-            page: (payload[:page].nil? ? 0 : payload[:page]),
-            size: (payload[:size].nil? ? 0 : payload[:size])
-          }
-        set_sender("GET", "integrations/assets/all-assets?projectId=#{payload[:projectId]}&page=#{payload[:page]}&size=#{payload[:size]}", payload)
+            page: payload[:page] || 0,
+            size: payload[:size] || 0
+          }.reject { |_, v| v.nil? }
+          query_string = params.map { |k, v| "#{k}=#{v}" }.join("&")
+        set_sender("GET", "integrations/assets/all-assets?#{query_string}", params)
       end
 
       def types payload
