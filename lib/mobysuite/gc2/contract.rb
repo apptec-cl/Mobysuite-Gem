@@ -54,7 +54,7 @@ module Mobysuite
           payload.merge!(contractId: data[:contract_id])
         end
         payload.merge!(nuevoEstado: data[:contract_state])
-        return set_sender("POST", "integrations/contracque me pasats/sync-state", payload)
+        return set_sender("POST", "integrations/contracts/sync-state", payload)
       end
     end
   end
