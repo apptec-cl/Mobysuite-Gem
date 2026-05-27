@@ -31,7 +31,6 @@ module Mobysuite
             payload.merge!(contractId: data[:contract_id])
           end
 
-          data.merge!(tipo: data[:tipo]) unless payload[:dni].nil?
           payload.merge!(numeroBien: data[:numero_bien]) unless data[:numero_bien].nil?
           payload.merge!(tipoBienEnum: data[:tipo_bien]) unless data[:tipo_bien].nil?
           payload.merge!(tipo: data[:tipo]) unless data[:tipo].nil?
@@ -42,7 +41,7 @@ module Mobysuite
           payload.merge!(retencion: data[:retencion]) unless data[:retencion].nil?
           payload.merge!(observacion: data[:observacion]) unless data[:observacion].nil?
 
-          return set_sender("POST", "integrations/contracts/reverse")
+          return set_sender("POST", "integrations/contracts/reverse", payload)
         end
 
       def change_state data = {}
