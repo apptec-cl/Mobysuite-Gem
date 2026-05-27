@@ -45,6 +45,8 @@ module Mobysuite
         end
 
       def change_state data = {}
+        payload = {}
+
         if data[:contract_id].nil?
           payload.merge!(numeroBien: data[:numero_bien]) 
           payload.merge!(tipoBienEnum: data[:tipo_bien])
