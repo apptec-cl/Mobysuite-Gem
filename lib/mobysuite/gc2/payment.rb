@@ -17,10 +17,12 @@ module Mobysuite
           "cardNumber": data[:card_number],
           "amount": data[:amount],
           "totalPayments": data[:total_payments],
-          "interestFreePayments": data[:interest_free_payments],
+          "interestFreePayments": data[:interest_free_payments]
         }
         payload[:amount] = data[:amount] unless data[:amount].nil?
         payload[:tipePay] = data[:tipePay] unless data[:tipePay].nil?
+        payload[:constantDate] = data[:constant_date] unless data[:constant_date].nil?
+
         set_sender("POST", "integrations/payments", payload)
       end
       def active_payment_info data
