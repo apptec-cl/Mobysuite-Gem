@@ -56,6 +56,7 @@ module Mobysuite
         payload[:tipoComprador] = data[:tipo_comprador] unless data[:tipo_comprador].nil?
         payload[:metadata] = data[:metadata] unless data[:metadata].nil?
         payload[:metadataTimeline] = data[:metadata_timeline] unless data[:metadata_timeline].nil?
+        payload[:boardColumn] = data[:board_column] unless data[:board_column].nil?
         payload[:userId] = data[:user_id] unless data[:user_id].nil?
         if data[:project_name].nil?
           payload[:project_id]  = data[:project_id]
