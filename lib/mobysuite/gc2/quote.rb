@@ -39,6 +39,56 @@ module Mobysuite
         data.merge!("utm_term": payload[:utm_term]) unless payload[:utm_term].nil?
         set_sender("POST", "integrations/quotes", data)
       end
+
+      def calculate_gloss payload
+        params = {
+          years: payload[:years],
+          rate: payload[:rate],
+          constant: payload[:constant],
+          mortgageCredit: payload[:mortgageCredit],
+          fees: payload[:fees],
+          feesTotalAmmount: payload[:feesTotalAmmount]
+        }
+        missing = params.select { |_, v| v.nil? }.keys
+        return {response: false, body: nil, msg: "Missing required params: #{missing.join(', ')}"} unless missing.empty?
+        query_string = params.map { |k, v| "#{k}=#{v}" }.join("&")
+        response = set_sender("GET", "integrations/quotes/caculate-gloss?#{query_string}", params)
+        return response unless response[:response] && response[:body].is_a?(Hash)
+        response[:body].merge!(parse_gloss(response[:body]["gloss"], response[:body]["feesGloss"]))
+        response
+      end
+
+      private
+
+      # Parses the gloss strings returned by the service and appends the
+      # separated values to the response body.
+      #   gloss     -> "Dividendo aproximado a 20 años: UF: 23,81 al 5,50%. Valor Dividendo : $904.856 Renta mínima : $3.619.426"
+      #   feesGloss -> "12 cuotas de 0.4375 UF c/u."
+      def parse_gloss gloss, fees_gloss
+        parsed = {}
+        unless gloss.nil?
+          parsed["years"]        = gloss[/(\d+)\s*años/, 1]&.to_i
+          parsed["dividendUf"]   = to_number(gloss[/UF:\s*([\d.,]+)/, 1])
+          parsed["rate"]         = to_number(gloss[/al\s*([\d.,]+)%/, 1])
+          parsed["dividend"]     = to_number(gloss[/Valor Dividendo\s*:\s*\$([\d.,]+)/, 1])
+          parsed["minimumIncome"] = to_number(gloss[/Renta mínima\s*:\s*\$([\d.,]+)/, 1])
+        end
+        unless fees_gloss.nil?
+          # feesGloss uses a plain dot as decimal separator (e.g. "0.4375"),
+          # not the Chilean format used in gloss, so parse it directly.
+          parsed["fees"]   = fees_gloss[/(\d+)\s*cuotas/, 1]&.to_i
+          parsed["feesUf"] = fees_gloss[/de\s*([\d.]+)\s*UF/, 1]&.to_f
+        end
+        parsed
+      end
+
+      # Converts a Chilean-formatted number (dot as thousands separator,
+      # comma as decimal separator) into a Float. Returns nil when blank.
+      def to_number value
+        return nil if value.nil? || value.strip.empty?
+        normalized = value.strip.gsub(".", "").tr(",", ".")
+        normalized.include?(".") ? normalized.to_f : normalized.to_i
+      end
     end
   end
 end

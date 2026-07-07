@@ -36,7 +36,47 @@ RSpec.describe Mobysuite::GC2::Quote do
       })
       expect(response[:body]['error'].nil?).to eq(true), "Hubo un error al cotizar. Mensaje de error: #{response[:body].to_s}"
       expect(response).to be_a(Hash)
-      expect(response[:response]).to eq(true) 
+      expect(response[:response]).to eq(true)
+    end
+  end
+
+  describe '#calculate_gloss' do
+    it 'Fails when a required param is missing' do
+      response = @quote.calculate_gloss({ years: 20 })
+      expect(response[:response]).to eq(false)
+      expect(response[:msg]).to include('Missing required params')
+    end
+
+    it 'Parses the gloss strings into separated values' do
+      gloss = "Dividendo aproximado a 20 años: UF: 23,81 al 5,50%. Valor Dividendo : $904.856 Renta mínima : $3.619.426"
+      fees_gloss = "12 cuotas de 0.4375 UF c/u."
+
+      parsed = @quote.send(:parse_gloss, gloss, fees_gloss)
+
+      expect(parsed["years"]).to eq(20)
+      expect(parsed["dividendUf"]).to eq(23.81)
+      expect(parsed["rate"]).to eq(5.5)
+      expect(parsed["dividend"]).to eq(904856)
+      expect(parsed["minimumIncome"]).to eq(3619426)
+      expect(parsed["fees"]).to eq(12)
+      expect(parsed["feesUf"]).to eq(0.4375)
+    end
+
+    it 'Calculates and appends parsed values to the response body' do
+      response = @quote.calculate_gloss({
+        years: 20,
+        rate: 0.055,
+        constant: 38000,
+        mortgageCredit: 3500,
+        fees: 12,
+        feesTotalAmmount: 5.25
+      })
+      expect(response).to be_a(Hash)
+      expect(response[:response]).to eq(true), "Error al calcular glosa: #{response[:body].to_s}"
+      expect(response[:body]["gloss"].nil?).to eq(false)
+      expect(response[:body]["years"].nil?).to eq(false)
+      expect(response[:body]["dividend"].nil?).to eq(false)
+      expect(response[:body]["feesUf"].nil?).to eq(false)
     end
   end
 end
