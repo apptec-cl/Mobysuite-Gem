@@ -11,8 +11,11 @@ module Mobysuite
         set_sender("GET", "integrations/payments?paymentCode=#{payment_code}")
       end
       def pay data
+        if data[:pay_id].nil? == data[:pay_code].nil?
+          raise ArgumentError, "provide either pay_id or pay_code, but not both"
+        end
+
         payload = {
-          "payCode": data[:pay_code],
           "authCode": data[:auth_code],
           "cardNumber": data[:card_number],
           "amount": data[:amount],
@@ -20,6 +23,8 @@ module Mobysuite
           "interestFreePayments": data[:interest_free_payments]
         }
         payload[:amount] = data[:amount] unless data[:amount].nil?
+        payload[:payId] = data[:pay_id] unless data[:pay_id].nil?
+        payload[:payCode] = data[:pay_code] unless data[:pay_code].nil?
         payload[:tipePay] = data[:tipePay] unless data[:tipePay].nil?
         payload[:constantDate] = data[:constant_date] unless data[:constant_date].nil?
 

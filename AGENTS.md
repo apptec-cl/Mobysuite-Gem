@@ -1,9 +1,11 @@
 # Gema `mobysuite` — Guía para IA
 
-Documento de referencia destinado a un agente/IA que necesita consumir esta gema. Describe arquitectura, autenticación, convenciones de llamada y el contrato de cada método público.
+Documento de referencia destinado a agentes de IA que deban entender, usar o mantener este repositorio. Este proyecto no es la API de Mobysuite: es una **gema Ruby cliente** que traduce métodos Ruby a solicitudes HTTP contra la API GC2 de Mobysuite.
+
+Antes de modificar un endpoint, se debe revisar su implementación en `lib/mobysuite/gc2/` y su spec correspondiente. El código es la fuente de verdad cuando este documento, el README y los tests difieran.
 
 - **Nombre:** `mobysuite`
-- **Versión actual:** `0.3.10` ([version.rb](lib/mobysuite/version.rb))
+- **Versión actual:** `0.3.20` ([version.rb](lib/mobysuite/version.rb))
 - **Lenguaje:** Ruby (`.ruby-version` fija la versión del proyecto)
 - **Dependencias runtime:** `httparty`, `dotenv`
 - **Propósito:** cliente HTTP para la API GC2 de Mobysuite (`https://<domain>-api.mobysuite.com/v1/api/...`).
@@ -30,6 +32,16 @@ Mobysuite (módulo raíz)
     ├── Firm         — confirmación de firma digital
     └── Deed         — escrituras (fecha de entrega)
 ```
+
+### Archivos principales
+
+- `lib/mobysuite.rb`: punto de entrada; carga autenticación y todas las clases GC2.
+- `lib/mobysuite/auth.rb`: transporte HTTP, autenticación y normalización de respuestas.
+- `lib/mobysuite/gc2/*.rb`: una clase cliente por área funcional de la API.
+- `lib/mobysuite/version.rb`: versión publicada de la gema.
+- `spec/*_spec.rb`: pruebas, en su mayoría de integración contra el dominio `try`.
+- `mobysuite.gemspec`: metadatos, archivos incluidos y dependencias.
+- `README.md`: documentación pública básica; actualmente es menos completa que este archivo.
 
 Todas las clases heredan de `AuthorizationGc2` ([auth.rb](lib/mobysuite/auth.rb)), que centraliza:
 
@@ -83,7 +95,7 @@ quote = Mobysuite::GC2::Quote.new("try")
 
 ### 2.3 Formato de respuesta universal
 
-`set_sender` siempre devuelve:
+`set_sender` normaliza las respuestas HTTP conocidas y devuelve:
 
 ```ruby
 { response: true,  body: <parsed_response> }                       # 200, 201
@@ -93,15 +105,25 @@ quote = Mobysuite::GC2::Quote.new("try")
 
 Para verificar éxito: `result[:response] == true`. Datos en `result[:body]`.
 
+Advertencias importantes:
+
+- Las solicitudes usan `verify: false`; actualmente no se valida el certificado TLS.
+- `GET` envía el tercer argumento como `body`, aunque varios métodos también construyen parámetros en la URL.
+- Sólo existen ramas de transporte para `GET`, `POST` y `PUT`.
+- Un `401` llama nuevamente a `auth(1)`, pero la solicitud original no se reenvía automáticamente.
+- `auth` rescata excepciones y normalmente las convierte en `{ token: nil, response: false, msg: error }`.
+
 ---
 
 ## 3. Convenciones de los métodos
 
-- Los métodos reciben un `Hash` (con `symbol` keys) llamado normalmente `payload` o `data`.
-- Las claves del hash de entrada usan **snake_case** (`project_id`, `client_rut`).
+- La mayoría de los métodos reciben un `Hash` con claves `Symbol`, llamado normalmente `payload` o `data`.
+- Preferir claves de entrada en **snake_case** (`project_id`, `client_rut`) al agregar funcionalidad nueva.
 - Internamente se mapean a las claves **camelCase** que espera la API (`projectId`, `cName`).
 - Los campos opcionales se incluyen sólo si no son `nil` (patrón `payload.merge!(key: data[:x]) unless data[:x].nil?`).
-- Los métodos `list` aceptan `page` y `size` para paginación; por defecto `0/0`.
+- Hay contratos heredados con nombres mixtos como `fName`, `discountId`, `tipePay` e `isSync`; no renombrarlos sin considerar compatibilidad hacia atrás.
+- Algunos métodos `list` aceptan `page` y `size`; donde están implementados, normalmente usan `0/0` por defecto.
+- La gema hace poca validación local. No asumir que una clave documentada como necesaria producirá siempre un `ArgumentError`; muchos métodos envían `nil` y dejan la validación a la API.
 
 ---
 
@@ -131,6 +153,11 @@ quote.create(
 )
 ```
 
+#### `calculate_gloss(payload)`
+`GET integrations/quotes/caculate-gloss?...`
+
+Calcula la glosa de dividendo y cuotas. Requiere `years`, `rate`, `constant`, `mortgageCredit`, `fees` y `feesTotalAmmount`. Si falta alguno devuelve `{ response: false, body: nil, msg: ... }` sin llamar a la API. Cuando la respuesta es exitosa, extrae desde `gloss` y `feesGloss` los valores `years`, `dividendUf`, `rate`, `dividend`, `minimumIncome`, `fees` y `feesUf`.
+
 ---
 
 ### 4.2 `Mobysuite::GC2::Prospect` — [prospect.rb](lib/mobysuite/gc2/prospect.rb)
@@ -142,7 +169,7 @@ Crea un prospecto/lead.
 
 **Claves principales:** `rut`, `fName`, `lName`, `bussines_name_type`, `email`, `phone`, `rango_renta`, `information_medium`, `observation`, `source` (default `"CENTRALIZADOR"`), `cip`, utm_*, `isSync` (default `false`), `dni` (default `false`).
 **Identificación de proyecto:** `project_name` **o** `project_id` (excluyente).
-**Opcionales:** `tipo_comprador`, `user_id`.
+**Opcionales:** `tipo_comprador`, `metadata`, `metadata_timeline`, `board_column`, `user_id`.
 
 ```ruby
 prospect.create(
@@ -288,6 +315,11 @@ contract.reverse(
 )
 ```
 
+#### `change_state(data = {})`
+`POST integrations/contracts/sync-state`
+
+Sincroniza el estado de un contrato. Lo identifica mediante `contract_id` o mediante `numero_bien` + `tipo_bien`, y envía `contract_state` como `nuevoEstado`.
+
 ---
 
 ### 4.10 `Mobysuite::GC2::Meet` — [meet.rb](lib/mobysuite/gc2/meet.rb)
@@ -312,7 +344,12 @@ Agenda Mobymeet. **Claves:** `dni`, `rut`, `fName`, `lName`, `email`, `phone`, `
 #### `pay(data)`
 `POST integrations/payments`
 
-**Claves:** `pay_code`, `auth_code`, `card_number`, `amount`, `total_payments`, `interest_free_payments`. Opcional: `tipePay`.
+Registra un pago. Debe recibir **exactamente uno** de estos identificadores:
+
+- `pay_id` → se envía como `payId`.
+- `pay_code` → se envía como `payCode`.
+
+Si ambos están presentes, o si faltan ambos, lanza `ArgumentError`. Las demás claves son `auth_code`, `card_number`, `amount`, `total_payments` e `interest_free_payments`. Son opcionales `tipePay` y `constant_date`.
 
 #### `active_payment_info(data)`
 `GET integrations/payments/add-automated-payments-info?...`
@@ -385,10 +422,11 @@ end
 
 ## 6. Manejo de errores
 
-- `set_sender` nunca lanza excepciones HTTP — siempre devuelve un hash. Validar `result[:response]` antes de usar `result[:body]`.
+- Para respuestas HTTP recibidas, `set_sender` devuelve un hash. Validar `result[:response]` antes de usar `result[:body]`.
 - En `401` la gema intenta reautenticarse (`auth(1)`) automáticamente; igual devuelve `response: false` para esa llamada — el caller decide si reintentar.
-- `auth` reintenta hasta 3 veces y luego hace `raise "[Autorization] Problem obtain token"`.
-- Errores de red u otros se devuelven como `{ token: nil, response: false, msg: <exception> }` cuando ocurren durante la autenticación.
+- Errores durante la autenticación se rescatan y se devuelven como `{ token: nil, response: false, msg: <exception> }`.
+- Errores de red producidos por `set_sender` no se rescatan en esa capa y pueden propagarse como excepciones.
+- `Payment#pay` es una excepción a la escasa validación local: lanza `ArgumentError` si no recibe exactamente uno entre `pay_id` y `pay_code`.
 
 ---
 
@@ -402,6 +440,14 @@ end
    - `set_sender("GET"|"POST"|"PUT", "integrations/<ruta>", payload)`.
 4. Añadir `require "mobysuite/gc2/<nombre>"` en [lib/mobysuite.rb](lib/mobysuite.rb).
 5. Crear `spec/<nombre>_spec.rb` siguiendo el patrón de los specs existentes (`Mobysuite::GC2::<Clase>.new("try")`).
+
+Al modificar endpoints existentes:
+
+- Mantener compatibilidad con las claves públicas actuales, incluso si mezclan estilos.
+- No enviar dos identificadores mutuamente excluyentes en el mismo payload.
+- Evitar mutar el hash recibido si no es necesario; algunos métodos antiguos sí lo hacen, pero no es una convención a replicar.
+- Probar por separado el mapeo Ruby → API usando dobles de `set_sender` cuando no se necesite una llamada real.
+- No incluir credenciales, tokens ni contenido de `.env` en código, fixtures, logs o commits.
 
 ---
 
@@ -417,6 +463,8 @@ rspec spec/client_spec.rb
 
 Los specs apuntan al dominio `try` (entorno de pruebas público de Mobysuite). Requieren `MOBYSUITE_GC2_CLIENT_ID` / `MOBYSUITE_GC2_CLIENT_SECRET` válidos en `.env`.
 
+Como muchos specs construyen las clases normalmente, la autenticación ocurre en el `before` y las pruebas pueden depender de red y credenciales. Para probar sólo la construcción de un payload puede usarse `described_class.allocate` y una expectativa sobre `set_sender`, evitando autenticar.
+
 ---
 
 ## 9. Build & release
@@ -426,3 +474,5 @@ gem build mobysuite.gemspec    # genera mobysuite-<version>.gem
 ```
 
 Bump de versión en [lib/mobysuite/version.rb](lib/mobysuite/version.rb).
+
+Antes de publicar, revisar también `mobysuite.gemspec`: actualmente incluye `.env` dentro de `spec.files`, lo que supone un riesgo de distribuir credenciales y debería corregirse antes de generar o publicar la gema.

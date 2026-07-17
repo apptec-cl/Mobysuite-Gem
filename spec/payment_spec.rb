@@ -7,6 +7,33 @@ RSpec.describe Mobysuite::GC2::Payment do
 
   describe '#Payment' do
 
+    it 'sends pay_id as payId when making a payment' do
+      payment = described_class.allocate
+
+      expect(payment).to receive(:set_sender).with(
+        "POST",
+        "integrations/payments",
+        hash_including(payId: 123)
+      ).and_return(response: true)
+
+      payment.pay(pay_id: 123)
+    end
+
+    it 'rejects pay_id and pay_code together' do
+      payment = described_class.allocate
+
+      expect {
+        payment.pay(pay_id: 123, pay_code: "P-YQVG45551")
+      }.to raise_error(ArgumentError, "provide either pay_id or pay_code, but not both")
+    end
+
+    it 'requires pay_id or pay_code' do
+      payment = described_class.allocate
+
+      expect {
+        payment.pay({})
+      }.to raise_error(ArgumentError, "provide either pay_id or pay_code, but not both")
+    end
 
     it 'Search Payment' do
       response = @payment.find("P-VBSR45554")
