@@ -9,7 +9,13 @@ class AuthorizationGc2
   AUTH = ".mobysuite.com/oauth/token".freeze
 
 
-  attr_accessor :headers, :domain, :client_id, :client_secret, :password, :grant_type, :token
+  attr_accessor :headers, :domain, :client_id, :password, :grant_type, :token
+
+  protected
+
+  attr_accessor :client_secret
+
+  public
 
   def initialize domain, client_id=nil, client_secret=nil, grant_type="client_credentials"
     self.domain        = domain

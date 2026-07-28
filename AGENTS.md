@@ -30,7 +30,8 @@ Mobysuite (módulo raíz)
     ├── Payment      — pagos
     ├── Client       — clientes (búsqueda por RUT)
     ├── Firm         — confirmación de firma digital
-    └── Deed         — escrituras (fecha de entrega)
+    ├── Deed         — escrituras (fecha de entrega)
+    └── Sso          — login de usuarios e introspección de tokens
 ```
 
 ### Archivos principales
@@ -43,12 +44,16 @@ Mobysuite (módulo raíz)
 - `mobysuite.gemspec`: metadatos, archivos incluidos y dependencias.
 - `README.md`: documentación pública básica; actualmente es menos completa que este archivo.
 
-Todas las clases heredan de `AuthorizationGc2` ([auth.rb](lib/mobysuite/auth.rb)), que centraliza:
+Las clases cliente de GC2 heredan de `AuthorizationGc2` ([auth.rb](lib/mobysuite/auth.rb)), que centraliza:
 
 - Lectura de credenciales (`.env` o argumentos del constructor).
 - Obtención del bearer token vía OAuth2 `client_credentials`.
 - Construcción del request HTTP con `HTTParty` (GET/POST/PUT).
 - Normalización de la respuesta a `{ response: <bool>, body: <parsed>, response_code: <int?> }`.
+
+`Mobysuite::GC2::Sso` es la excepción: no hereda de `AuthorizationGc2`, porque
+consume los endpoints OAuth de login e introspección del SSO en lugar de los
+endpoints `v1/api`.
 
 Constante de namespace: `NAMESPACE = "v1/api"`.
 URL final: `https://<domain>-api.mobysuite.com/v1/api/<path>`.
@@ -65,6 +70,10 @@ Se leen en este orden:
    - `MOBYSUITE_GC2_CLIENT_ID`
    - `MOBYSUITE_GC2_CLIENT_SECRET`
 2. Si no están definidas, se usan los argumentos pasados al constructor.
+
+`client_secret` es un atributo protegido: puede usarse internamente para
+autenticar, pero no puede leerse ni modificarse mediante
+`obj.client_secret`.
 
 Ejemplo `.env`:
 
@@ -385,6 +394,76 @@ Recibe `asset_id` **o** `contract_id`, más `type`.
 
 ---
 
+### 4.15 `Mobysuite::GC2::Sso` — [sso.rb](lib/mobysuite/gc2/sso.rb)
+
+Autentica usuarios mediante OAuth `password` y valida los tokens obtenidos
+mediante introspección RFC 7662.
+
+No recibe `domain`. Su constructor es:
+
+```ruby
+Mobysuite::GC2::Sso.new(client_id = nil, client_secret = nil)
+```
+
+Las credenciales se leen desde `MOBYSUITE_GC2_CLIENT_ID` y
+`MOBYSUITE_GC2_CLIENT_SECRET`; si no existen, se utilizan los argumentos del
+constructor. El secreto y el valor de Basic Auth no se exponen como métodos
+públicos.
+
+Las URLs se seleccionan automáticamente mediante `Rails.env`. Fuera de Rails
+se consulta `RAILS_ENV`, luego `RACK_ENV`, y se usa producción por defecto.
+
+| Ambiente | Login | Introspección |
+|----------|-------|----------------|
+| `development`, `test` | `https://sso-test.mobysuite.com/oauth/token` | `https://sso-test.mobysuite.com/oauth/introspect` |
+| cualquier otro | `https://sso.mobysuite.com/oauth/token` | `https://sso.mobysuite.com/oauth/introspect` |
+
+#### `login(data)` / `authenticate(data)`
+
+Ejecuta el login con grant `password`. `authenticate` es un alias de `login`.
+
+**Claves:** `customer`, `username`, `password`.
+
+Devuelve la respuesta normalizada:
+
+```ruby
+{ response: true, body: <parsed_response> }
+```
+
+Si falla agrega `response_code`. El header `Mobysuite-Customer` recibe
+`customer`; `Authorization` contiene el Basic Auth construido con las
+credenciales OAuth.
+
+#### `validate_token(token, customer)`
+
+Envía el token como formulario al endpoint de introspección, junto con el
+header `Mobysuite-Customer`. Devuelve un
+`Mobysuite::GC2::Sso::TokenIntrospector::Result` con:
+
+- `active?`: indica si la respuesta fue exitosa y contiene `"active" => true`.
+- `claims`: hash de claims, vacío cuando la validación falla.
+- `error`: `nil` en éxito o uno de `empty_token`, `empty_customer`,
+  `sso_not_configured`, `inactive_token`, `sso_timeout` o `sso_unreachable`.
+
+Flujo de uso:
+
+```ruby
+sso = Mobysuite::GC2::Sso.new
+login = sso.login(
+  customer: "app",
+  username: "usuario",
+  password: "password"
+)
+
+if login[:response]
+  token = login[:body]["access_token"] || login[:body]["accessToken"]
+  validation = sso.validate_token(token, "app")
+  claims = validation.claims if validation.active?
+end
+```
+
+---
+
 ## 5. Patrón de uso típico
 
 ```ruby
@@ -462,6 +541,12 @@ rspec spec/client_spec.rb
 ```
 
 Los specs apuntan al dominio `try` (entorno de pruebas público de Mobysuite). Requieren `MOBYSUITE_GC2_CLIENT_ID` / `MOBYSUITE_GC2_CLIENT_SECRET` válidos en `.env`.
+
+`spec/sso_spec.rb` contiene una prueba real de login seguida de introspección.
+Además de las credenciales OAuth, requiere `SSO_CUSTOMER`, `SSO_USERNAME` y
+`SSO_PASSWORD`. No usa mocks para ese flujo: una contraseña incorrecta debe
+hacer fallar el spec. Las URLs de SSO se determinan automáticamente por
+ambiente y no se configuran mediante variables de entorno.
 
 Como muchos specs construyen las clases normalmente, la autenticación ocurre en el `before` y las pruebas pueden depender de red y credenciales. Para probar sólo la construcción de un payload puede usarse `described_class.allocate` y una expectativa sobre `set_sender`, evitando autenticar.
 
