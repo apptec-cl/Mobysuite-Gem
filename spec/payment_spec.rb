@@ -43,7 +43,7 @@ RSpec.describe Mobysuite::GC2::Payment do
           "POST",
           "integrations/payments/change-status",
           id: 13_853,
-          accountingStatus: "DEPOSITADO"
+          estadoContable: "DEPOSITADO"
         ).and_return(response: true)
 
         payment.change_status(id: 13_853, accounting_status: "DEPOSITADO")
@@ -53,8 +53,8 @@ RSpec.describe Mobysuite::GC2::Payment do
         expect(payment).to receive(:set_sender).with(
           "POST",
           "integrations/payments/change-status",
-          code: "P-WZKW13853",
-          accountingStatus: "CONCILIADO"
+          codigo: "P-WZKW13853",
+          estadoContable: "CONCILIADO"
         ).and_return(response: true)
 
         payment.change_status(code: "P-WZKW13853", accounting_status: "CONCILIADO")
@@ -65,8 +65,8 @@ RSpec.describe Mobysuite::GC2::Payment do
           "POST",
           "integrations/payments/change-status",
           id: 13_853,
-          code: "P-WZKW13853",
-          accountingStatus: "CONCILIADO"
+          codigo: "P-WZKW13853",
+          estadoContable: "CONCILIADO"
         ).and_return(response: true)
 
         payment.change_status(

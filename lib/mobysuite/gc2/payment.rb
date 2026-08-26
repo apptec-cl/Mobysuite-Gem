@@ -39,9 +39,9 @@ module Mobysuite
           raise ArgumentError, "provide accounting_status"
         end
 
-        payload = { accountingStatus: data[:accounting_status] }
+        payload = { estadoContable: data[:accounting_status] }
         payload[:id] = data[:id] unless data[:id].nil?
-        payload[:code] = data[:code] unless data[:code].nil?
+        payload[:codigo] = data[:code] unless data[:code].nil?
 
         set_sender("POST", "integrations/payments/change-status", payload)
       end

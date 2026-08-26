@@ -360,6 +360,64 @@ Registra un pago. Debe recibir **exactamente uno** de estos identificadores:
 
 Si ambos están presentes, o si faltan ambos, lanza `ArgumentError`. Las demás claves son `auth_code`, `card_number`, `amount`, `total_payments` e `interest_free_payments`. Son opcionales `tipePay` y `constant_date`.
 
+#### `change_status(data)`
+`POST integrations/payments/change-status`
+
+Actualiza el estado contable de los recibos documentados asociados a un pago.
+El pago se identifica mediante `id`, `code` o ambos. La clave obligatoria
+`accounting_status` se envía a la API como `estadoContable`; `code` se envía
+como `codigo`.
+
+Payload enviado al servicio:
+
+```json
+{
+  "id": 1,
+  "codigo": "P-ASDJA1993",
+  "estadoContable": "PAGADO"
+}
+```
+
+`id` y `codigo` son opcionales individualmente, pero se debe proporcionar al
+menos uno.
+
+```ruby
+payment.change_status(
+  code: "P-WZKW13853",
+  accounting_status: "CONCILIADO"
+)
+```
+
+Estados contables admitidos y estado resultante de los recibos:
+
+| `accounting_status` | Estado del recibo |
+|---------------------|-------------------|
+| `DEPOSITADO` | `CANCELADO` |
+| `TRANSFERENCIA` | `CANCELADO` |
+| `TRANSBANK` | `CANCELADO` |
+| `VALE_VISTA` | `CANCELADO` |
+| `CONCILIADO` | `CANCELADO` |
+| `EMPTY` | `VIGENTE` |
+| `EN_CARTERA` | `VIGENTE` |
+| `EN_CUSTODIA` | `VIGENTE` |
+| `TRANSBANK_POR_PAGAR` | `VIGENTE` |
+| `CHEQUE_EN_GARANTIA` | `VIGENTE` |
+| `CHEQUE_RESCATADO` | `VIGENTE` |
+| `PROTESTADO` | `VIGENTE` |
+| `OBSERVADO` | `VIGENTE` |
+
+La API recalcula el estado general del pago después de actualizar los recibos:
+
+- Si todos quedan en `CANCELADO`, el pago queda en `PAGADO`.
+- Si al menos uno queda en `VIGENTE` o `EMPTY`, el pago queda en `DOCUMENTADO`.
+- Los recibos marcados intencionalmente como no pagados (`estadoPago = EMPTY`)
+  no son modificados por este endpoint.
+
+El método lanza `ArgumentError` cuando no se entrega `id` ni `code`, o cuando
+falta `accounting_status`. La validez del estado contable es verificada por la
+API; un valor que no pertenece a la tabla anterior produce una respuesta HTTP
+400 normalizada por la gema.
+
 #### `active_payment_info(data)`
 `GET integrations/payments/add-automated-payments-info?...`
 
@@ -505,7 +563,8 @@ end
 - En `401` la gema intenta reautenticarse (`auth(1)`) automáticamente; igual devuelve `response: false` para esa llamada — el caller decide si reintentar.
 - Errores durante la autenticación se rescatan y se devuelven como `{ token: nil, response: false, msg: <exception> }`.
 - Errores de red producidos por `set_sender` no se rescatan en esa capa y pueden propagarse como excepciones.
-- `Payment#pay` es una excepción a la escasa validación local: lanza `ArgumentError` si no recibe exactamente uno entre `pay_id` y `pay_code`.
+- `Payment#pay` lanza `ArgumentError` si no recibe exactamente uno entre `pay_id` y `pay_code`.
+- `Payment#change_status` lanza `ArgumentError` si no recibe `id` ni `code`, o si falta `accounting_status`.
 
 ---
 
