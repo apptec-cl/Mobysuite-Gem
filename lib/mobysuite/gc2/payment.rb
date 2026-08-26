@@ -30,6 +30,22 @@ module Mobysuite
 
         set_sender("POST", "integrations/payments", payload)
       end
+
+      def change_status data
+        if data[:id].nil? && data[:code].nil?
+          raise ArgumentError, "provide id or code"
+        end
+        if data[:accounting_status].nil?
+          raise ArgumentError, "provide accounting_status"
+        end
+
+        payload = { accountingStatus: data[:accounting_status] }
+        payload[:id] = data[:id] unless data[:id].nil?
+        payload[:code] = data[:code] unless data[:code].nil?
+
+        set_sender("POST", "integrations/payments/change-status", payload)
+      end
+
       def active_payment_info data
         parameter = data[:contract_id].nil? ? "idAsset=#{data[:asset_id]}" : "idContract=#{data[:contract_id]}"
         set_sender("GET", "integrations/payments/add-automated-payments-info?#{parameter}&tipo=#{data[:type]}", data)

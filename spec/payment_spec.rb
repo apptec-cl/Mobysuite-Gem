@@ -35,6 +35,60 @@ RSpec.describe Mobysuite::GC2::Payment do
       }.to raise_error(ArgumentError, "provide either pay_id or pay_code, but not both")
     end
 
+    describe '#change_status' do
+      let(:payment) { described_class.allocate }
+
+      it 'changes the accounting status using the payment id' do
+        expect(payment).to receive(:set_sender).with(
+          "POST",
+          "integrations/payments/change-status",
+          id: 13_853,
+          accountingStatus: "DEPOSITADO"
+        ).and_return(response: true)
+
+        payment.change_status(id: 13_853, accounting_status: "DEPOSITADO")
+      end
+
+      it 'changes the accounting status using the payment code' do
+        expect(payment).to receive(:set_sender).with(
+          "POST",
+          "integrations/payments/change-status",
+          code: "P-WZKW13853",
+          accountingStatus: "CONCILIADO"
+        ).and_return(response: true)
+
+        payment.change_status(code: "P-WZKW13853", accounting_status: "CONCILIADO")
+      end
+
+      it 'allows both payment identifiers' do
+        expect(payment).to receive(:set_sender).with(
+          "POST",
+          "integrations/payments/change-status",
+          id: 13_853,
+          code: "P-WZKW13853",
+          accountingStatus: "CONCILIADO"
+        ).and_return(response: true)
+
+        payment.change_status(
+          id: 13_853,
+          code: "P-WZKW13853",
+          accounting_status: "CONCILIADO"
+        )
+      end
+
+      it 'requires a payment identifier' do
+        expect {
+          payment.change_status(accounting_status: "DEPOSITADO")
+        }.to raise_error(ArgumentError, "provide id or code")
+      end
+
+      it 'requires an accounting status' do
+        expect {
+          payment.change_status(id: 13_853)
+        }.to raise_error(ArgumentError, "provide accounting_status")
+      end
+    end
+
     it 'Search Payment' do
       response = @payment.find("P-VBSR45554")
       expect(response).to be_a(Hash)
