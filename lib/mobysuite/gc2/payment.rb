@@ -46,6 +46,21 @@ module Mobysuite
         set_sender("POST", "integrations/payments/change-status", payload)
       end
 
+      def reverse_payments data
+        payment_ids = data[:payment_ids]
+        receipt_payment_ids = data[:receipt_payment_ids]
+
+        if payment_ids.nil? == receipt_payment_ids.nil?
+          raise ArgumentError, "provide either payment_ids or receipt_payment_ids, but not both"
+        end
+
+        payload = { comment: data[:comment] }
+        payload[:paymentIds] = payment_ids unless payment_ids.nil?
+        payload[:receiptPaymentIds] = receipt_payment_ids unless receipt_payment_ids.nil?
+
+        set_sender("POST", "integrations/payments/reverse-payments", payload)
+      end
+
       def active_payment_info data
         parameter = data[:contract_id].nil? ? "idAsset=#{data[:asset_id]}" : "idContract=#{data[:contract_id]}"
         set_sender("GET", "integrations/payments/add-automated-payments-info?#{parameter}&tipo=#{data[:type]}", data)

@@ -89,6 +89,60 @@ RSpec.describe Mobysuite::GC2::Payment do
       end
     end
 
+    describe '#reverse_payments' do
+      let(:payment) { described_class.allocate }
+
+      it 'reverses payments using payment ids' do
+        expect(payment).to receive(:set_sender).with(
+          "POST",
+          "integrations/payments/reverse-payments",
+          paymentIds: [1000, 1001, 1002],
+          comment: "Reversa masiva"
+        ).and_return(response: true)
+
+        payment.reverse_payments(
+          payment_ids: [1000, 1001, 1002],
+          comment: "Reversa masiva"
+        )
+      end
+
+      it 'reverses payments using receipt payment ids' do
+        expect(payment).to receive(:set_sender).with(
+          "POST",
+          "integrations/payments/reverse-payments",
+          receiptPaymentIds: [50_001, 50_002],
+          comment: "Rechazo de pago"
+        ).and_return(response: true)
+
+        payment.reverse_payments(
+          receipt_payment_ids: [50_001, 50_002],
+          comment: "Rechazo de pago"
+        )
+      end
+
+      it 'rejects both types of identifiers together' do
+        expect {
+          payment.reverse_payments(
+            payment_ids: [1000],
+            receipt_payment_ids: [50_001],
+            comment: "Reversa"
+          )
+        }.to raise_error(
+          ArgumentError,
+          "provide either payment_ids or receipt_payment_ids, but not both"
+        )
+      end
+
+      it 'requires one type of identifier' do
+        expect {
+          payment.reverse_payments(comment: "Reversa")
+        }.to raise_error(
+          ArgumentError,
+          "provide either payment_ids or receipt_payment_ids, but not both"
+        )
+      end
+    end
+
     it 'Search Payment' do
       response = @payment.find("P-VBSR45554")
       expect(response).to be_a(Hash)

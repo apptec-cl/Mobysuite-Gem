@@ -418,6 +418,36 @@ falta `accounting_status`. La validez del estado contable es verificada por la
 API; un valor que no pertenece a la tabla anterior produce una respuesta HTTP
 400 normalizada por la gema.
 
+#### `reverse_payments(data)`
+`POST integrations/payments/reverse-payments`
+
+Reversa uno o varios pagos mediante exactamente uno de estos identificadores:
+
+- `payment_ids` → se envía como `paymentIds`.
+- `receipt_payment_ids` → se envía como `receiptPaymentIds`.
+
+Ambas claves reciben un arreglo de IDs. `comment` contiene el motivo o detalle
+de la operación.
+
+```ruby
+payment.reverse_payments(
+  payment_ids: [1000, 1001, 1002],
+  comment: "Reversa masiva o rechazo de pago"
+)
+```
+
+También puede realizarse mediante IDs de recibos:
+
+```ruby
+payment.reverse_payments(
+  receipt_payment_ids: [50_001, 50_002],
+  comment: "Rechazo de pago"
+)
+```
+
+El método lanza `ArgumentError` cuando ambos tipos de identificadores están
+presentes o cuando faltan ambos.
+
 #### `active_payment_info(data)`
 `GET integrations/payments/add-automated-payments-info?...`
 
@@ -565,6 +595,7 @@ end
 - Errores de red producidos por `set_sender` no se rescatan en esa capa y pueden propagarse como excepciones.
 - `Payment#pay` lanza `ArgumentError` si no recibe exactamente uno entre `pay_id` y `pay_code`.
 - `Payment#change_status` lanza `ArgumentError` si no recibe `id` ni `code`, o si falta `accounting_status`.
+- `Payment#reverse_payments` lanza `ArgumentError` si no recibe exactamente uno entre `payment_ids` y `receipt_payment_ids`.
 
 ---
 

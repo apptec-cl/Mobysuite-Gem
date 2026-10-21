@@ -54,6 +54,9 @@ module Mobysuite
           payload.merge!(contractId: data[:contract_id])
         end
         payload.merge!(nuevoEstado: data[:contract_state])
+        payload.merge!(projectId: data[:project_id]) unless data[:project_id].nil?
+        payload.merge!(nombreProyecto: data[:project_name]) unless data[:project_name].nil?
+
         return set_sender("POST", "integrations/contracts/sync-state", payload)
       end
     end
