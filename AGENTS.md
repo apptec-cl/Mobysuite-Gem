@@ -262,6 +262,8 @@ Lista proyectos. Paginación: `page`, `size`.
 
 **Claves:** `quote_code`, `auth_code`, `card_number`, `total_payments`, `interest_free_payments`, `rut`, `first_name`, `last_name`, `email`, `phone`, `address`, `number`, `commune`, `city`, `tipe_pay`.
 
+**Claves opcionales:** `birth_date` (→ `birthDate`), `nationality`, `profession`, `marital_status` (→ `maritalStatus`), `patrimonial_regime` (→ `patrimonialRegime`). Se omiten cuando son `nil`. `commune` se envía con el mismo nombre y mantiene su comportamiento existente.
+
 ---
 
 ### 4.7 `Mobysuite::GC2::Opportunity` — [opportunity.rb](lib/mobysuite/gc2/opportunity.rb)
