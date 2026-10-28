@@ -9,6 +9,12 @@ module Mobysuite
       def table payload
         set_sender("GET", "integrations/parameters/table/#{payload}", payload)
       end
+
+      def table_with_filter(payload, filter = nil)
+        path = "parameters/table/#{payload}"
+        path += "/parent/#{filter}" unless filter.nil?
+        set_sender("GET", path, payload)
+      end
     end
   end
 end

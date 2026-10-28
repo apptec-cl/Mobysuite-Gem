@@ -253,6 +253,17 @@ Lista proyectos. Paginación: `page`, `size`.
 
 `payload` es el identificador de la tabla (string/symbol) — se concatena a la URL.
 
+#### `table_with_filter(payload, filter = nil)`
+`GET parameters/table/<payload>[/parent/<filter>]`
+
+Misma lógica que `table`, sin el prefijo `integrations`. El filtro es opcional:
+si se omite o es `nil`, no se agrega `/parent/<filter>`.
+
+```ruby
+parameter.table_with_filter("COMUNA")
+parameter.table_with_filter("COMUNA", 13)
+```
+
 ---
 
 ### 4.6 `Mobysuite::GC2::Booking` — [booking.rb](lib/mobysuite/gc2/booking.rb)
